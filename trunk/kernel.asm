@@ -19,11 +19,11 @@ start:                           ;
 
 ;-----[ main loop, CLI etc ]-----;
 loop:                            ;
-   jmp loop                      ; end of loop enter hang mode
+   jmp loop                      ; loop dat empty loop!
 ;--------------------------------;
 
 ;-----[ parse command ]-----;
-exec_command:               ;
+exec_command:               ; not in use yet
 ;---------------------------;
 
 ;-----[ get the keyboard input ]-----;
