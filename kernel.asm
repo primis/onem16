@@ -1,4 +1,4 @@
-jmp 0x2000:start    ; Skip our data area
+jmp 0x7C00:start    ; Skip our data area
 
 ;=========[ Data Section ]============================================================================
 
@@ -25,7 +25,7 @@ last_key  db 0                                                       ; Last key 
 
 ;-----[ start, entry point ]-----;
 start:                           ;
-   mov ax, 2000h                 ; mov the segment to 2000
+   mov ax, 07C0h                 ; mov the segment to 2000
    mov ds, ax                    ; Data segment 0
    mov si, welcome               ; Source index is now a pointer to the welcome message
    call print_string             ; Print the string
@@ -37,7 +37,7 @@ start:                           ;
    mov [gs:bx], word kb_handler  ; Move the function there  
    mov [gs:bx+2], ds             ; And its segment
    sti                           ; Restore interrupts
-   mov ax, 2000h                 ; lets fix up gs...
+   mov ax, 07C0h                 ; lets fix up gs...
    mov gs, ax                    ; Its better this way...
    mov es, ax                    ; While we're at it...
    mov fs, ax                    ; Lets get all the segments
