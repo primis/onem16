@@ -1,10 +1,11 @@
-jmp 0x2000:start    ; Skip our data area
+[ORG 0x7C00]
+jmp 0:start    ; Skip our data area
 
 ;=========[ Data Section ]============================================================================
 
 ;---------[ Messages, Prompts, Etc ]---------------------------------;
-welcome   db 'welcome to onem16!', 0x0D, 0x0A                        ; The Welcome message
-          db 'please close the door when you leave.', 0x0D, 0x0A, 0  ; It spans two lines.
+welcome   db 'Welcome to onem16!', 0x0D, 0x0A                        ; The Welcome message
+          db 'Please close the door when you leave.', 0x0D, 0x0A, 0  ; It spans two lines.
 prompt    db '>>', 0                                                 ; The system prompt.
 ;--------------------------------------------------------------------; 
 
@@ -25,22 +26,19 @@ last_key  db 0                                                       ; Last key 
 
 ;-----[ start, entry point ]-----;
 start:                           ;
-   mov ax, 2000h                 ; mov the segment to 2000
+   xor ax, ax                    ; mov the segment to 2000
    mov ds, ax                    ; Data segment 0
+   mov es, ax                    ; While we're at it...
+   mov fs, ax                    ; Lets get all the segments
+   mov gs, ax                    ; Its better this way...
    mov si, welcome               ; Source index is now a pointer to the welcome message
    call print_string             ; Print the string
    cli                           ; No interruptions!
    mov bx, 0x09                  ; Hardware interrupt Number for Keyboard
    shl bx, 2                     ; Multiply by 4
-   xor ax, ax                    ; Zero it out
-   mov gs, ax                    ; Start of memory
    mov [gs:bx], word kb_handler  ; Move the function there  
    mov [gs:bx+2], ds             ; And its segment
    sti                           ; Restore interrupts
-   mov ax, 2000h                 ; lets fix up gs...
-   mov gs, ax                    ; Its better this way...
-   mov es, ax                    ; While we're at it...
-   mov fs, ax                    ; Lets get all the segments
    jmp main                      ; Jump to the main loop
 ;--------------------------------;
 
