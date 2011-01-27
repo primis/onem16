@@ -7,6 +7,7 @@ jmp 0:start    ; Skip our data area
 welcome   db 'Welcome to onem16!', 0x0D, 0x0A                        ; The Welcome message
           db 'Please close the door when you leave.', 0x0D, 0x0A, 0  ; It spans two lines.
 prompt    db '>>', 0                                                 ; The system prompt.
+str_buf   times 64 db 0                                              ; String buffer
 ;--------------------------------------------------------------------; 
 
 
@@ -18,8 +19,9 @@ kbdus     db 0, 27, '1234567890-=', 8, 11, 'qwertyuiop[]', 10, 0     ; Entries f
           db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    ; Oh well, keep going.
           db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    ; Wow this is long...
           db 0, 0, 0, 0                                              ; Ah, finally done :D.
-key_buff  times 128 db 0                                             ; Keyboard buffer
+key_buff  times 128 db 'a'                                           ; Keyboard buffer
 last_key  db 0                                                       ; Last key in buffer
+wait_key  db 0                                                       ; Used in getchar
 ;--------------------------------------------------------------------;
 
 ;=========[ Code Section ]============================================================================
@@ -44,7 +46,10 @@ start:                           ;
 
 ;-----[ main hang, CLI etc ]-----;
 main:                            ;
-   jmp $                         ; loop dat empty loop!
+   mov si, str_buf               ; Move our source to a buffer (string)
+   call gets                     ; Get a string from the keyboard
+   call print_string             ; Print the string
+   jmp main                      ; loopy loop!
 ;--------------------------------;
 
 ;-----[ parse command ]-----;
@@ -68,12 +73,12 @@ kb_handler:                          ; not a dummy function :3
    mov al, bl                        ; Put our original charecter back
 .print:                              ; Printing sub routine
    int 0x10                          ; Print dat char
-   mov bx, key_buff                  ; Move BX to the keyboard buffer
-   add bx, last_key                  ; Add to current pointer
+   mov bx, key_buff                  ; Move the key buffer to bx
+   xor cx, cx                        ; Make it zero!
+   mov cl, byte [last_key]           ; Stuff goes here...
+   add bx, cx                        ; Add to current pointer
    mov [bx], al                      ; Put the ascii code there
-   mov ax, last_key                  ; Get the key pointer
-   inc ax                            ; Increment the last key pointer
-   mov [last_key], ax                ; Put the key back 
+   inc byte [last_key]               ; Increment the last key pointer
  .done:                              ; We're all set, clean up
    mov al, 0x20                      ; Prepare to tell the PIC (programmable interrupt contoller)
    out 0x20, al                      ; Tell the PIC that the interrupt is finished
@@ -82,28 +87,41 @@ kb_handler:                          ; not a dummy function :3
 ;------------------------------------;
 
 ;-----[ get a charecter from input ]--------------;
-getchar:                                          ;
+getchar:                                          ; Input nothing, Output al = charecter
    pusha                                          ; Push all our registers
-   xor ax, ax                                     ; Here's a fun trick:
-   cmp ax, last_key                               ; We can wait for the buffer to be empty
-   je getchar                                     ; By checking if the last key is 0
+   cld                                            ; Make sure stosb and lodsb increment DI and SI respectivly 
+.check:                                           ; Wait for buffer to have a key
+   xor al, al                                     ; Here's a fun trick:
+   cmp al, byte [last_key]                        ; We can wait for the buffer to be empty
+   je .check                                      ; By checking if the last key is 0
+   mov dl, byte [key_buff]                        ; Retreive the charecter
+   mov byte [wait_key], dl                        ; We store the char here
    cli                                            ; We have controll over the buffer now, keep it that way!
-   xor cl, cl                                     ; CX acts as a counter
-   mov si, key_buff                               ; Put our key_buffer here 
-   mov di, si                                     ; Copy Source to data
-   inc si                                         ; Increment the source
- .copy:                                           ; Start of a loop
-   lodsb                                          ; Load from si
-   stosb                                          ; Store to di
-   inc si                                         ; Increment source pointer
-   inc di                                         ; Increment destination pointer
-   dec cl                                         ; Decrement Counter
-   cmp cl, [last_key]                             ; Check to see if we hit the end yet
-   jne .copy                                      ; If not, reiterate
-   sti                                            ; If so, restore interrupts
+   xor cx, cx                                     ; We need CX to be empty
+   mov cl, byte [last_key]                        ; Move the length to our counter
+   mov di, key_buff                               ; Data index points to the buffer start
+   lea si, [di+1]                                 ; load the address of Data index to source index +1
+   rep movsb                                      ; mov a byte from si to di until cx = 0
+   dec byte [last_key]                            ; Decrement the number of keys by one
+   sti                                            ; Restore interrupts
    popa                                           ; Restore our registers
-   mov al, [key_buff]                             ; Move the contents of the key buffer to ax
+   mov al, byte [wait_key]                        ; Move the contents of the key buffer to al
    ret                                            ; Return
+;-----[ get a string from input ]-----------------;
+gets:                                             ; Input SI = String Pointer
+   pusha                                          ; Put all registers on stack
+   mov di, si                                     ; We're gonna use di
+    .get:                                         ; Get a charecter
+   call getchar                                   ; We're getting one charecter here
+   cmp al, 10                                     ; See if we hit an enter
+   je .done                                       ; If we did, finish
+   stosb                                          ; Store the byte
+   jmp .get                                       ; Keep going
+ .done                                            ; Finished now, clean up
+   xor ax, ax                                     ; zero it out
+   stosb                                          ; Store our null
+   popa                                           ; Return everything to normal
+   ret                                            ; All done
 ;-----[ print_string, message location = si ]-----;
 print_string:                                     ;
    lodsb                                          ; Grab a byte from our data source (message)
