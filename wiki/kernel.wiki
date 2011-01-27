@@ -1,4 +1,4 @@
-#summary The basic philosophy if the kernel.
+#summary The basic philosophy of the kernel.
 #labels Featured,Phase-Design
 
 = Introduction =
