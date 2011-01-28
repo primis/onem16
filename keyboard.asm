@@ -4,6 +4,20 @@
 ;                                  Keyboard interrupt, and functions                                  ; 
 ;=====================================================================================================;
 
+;---------[ Keyboard Variables ]-------------------------------------;
+kbdus     db 0, 27, '1234567890-=', 8, 11, 'qwertyuiop[]', 10, 0     ; Entries for the xlat!
+          db 'asdfghjkl;', 39, '`', 0, 92, 'zxcvbnm,./', 0, '*', 0,  ;
+          db ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  ; Most of these are 0's
+          db 0, 0, 0, '-', 0, 0, 0, '+', 0, 0, 0, 0, 0, 0, 0, 0, 0   ; But thats too bad :P
+          db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    ; Oh well, keep going.
+          db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    ; Wow this is long...
+          db 0, 0, 0, 0                                              ; Ah, finally done :D.
+key_buff  times 128 db 'a'                                           ; Keyboard buffer
+last_key  db 0                                                       ; Last key in buffer
+wait_key  db 0                                                       ; Used in getchar
+;--------------------------------------------------------------------;
+
+
 ;-----[ get the keyboard input ]-----;
 kb_handler:                          ; not a dummy function :3
    pusha                             ; Push all registers onto the stack
