@@ -1,0 +1,15 @@
+#summary Current list of features of the kernel
+#labels Featured,Phase-Implementation
+= Introduction =
+
+This list will eventually be an interrupt table, but for the time being, its just gonna be a list of the features.
+
+
+= Details =
+
+Here is a short list of current features:
+  * getchar - Gets one character from stdin (no it doesn't have to be a keyboard!) and stores it in al for you.
+  * gets - Gets a null ended string from stdin, you point it an array in si, it returns a string in it, perfect for use with print_string
+  * waitkey - Waits for a keypress, doesn't return anything
+  * print_string - prints a string pointed to by si, stops at null ending, NOT newline
+  
