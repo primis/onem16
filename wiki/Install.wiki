@@ -1,5 +1,5 @@
 #summary How to install and run onem16.
-#labels Phase-Deploy
+#labels Phase-Deploy,Featured
 
 = Introduction =
 
@@ -14,7 +14,7 @@ First, we have a few requirements:
   * Luck
 Ok, now that we have that down, here we go:
 Step 1: Download the current source code from the source tab of this site
-Step 2: Open a Command Processor (cmd on windows, or a terminal on *NIX)
+Step 2: Open a Command Processor (cmd on windows, or a terminal on UNIX-Like Computer)
 Step 3: Navigate to the folder (CD works wonders!)
 Step 4: Type "nasm kernel.asm -o kernel.bin"
 This should assemble the kernel and create a new binary.
