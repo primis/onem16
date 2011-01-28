@@ -12,6 +12,12 @@ kbdus     db 0, 27, '1234567890-=', 8, 11, 'qwertyuiop[]', 10, 0     ; Entries f
           db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    ; Oh well, keep going.
           db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0    ; Wow this is long...
           db 0, 0, 0, 0                                              ; Ah, finally done :D.
+kbdus_s   db 0, 27, '!@#$%^&*()_+' 8, 9, 'QWERTYUIOP{}', 10, 0       ; Shifted QWERTY 
+	      db 'ASDFGHJKL:"~', 0,	'|ZXCVBNM<>?', 0, '*', 0, ' ', 0     ; This one is different from the one above
+	      db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7', '8', '9', 0    ; I'm not gonna do a caps lock though
+	      db '4', '5', '6', 0, '1', '2', '3', '0', 0, 0, 0, 0, 0, 0  ; no need really
+	      db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; OK almost done now
+	      db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; yep, here it is
 key_buff  times 128 db 'a'                                           ; Keyboard buffer
 last_key  db 0                                                       ; Last key in buffer
 wait_key  db 0                                                       ; Used in getchar
