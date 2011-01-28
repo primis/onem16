@@ -21,3 +21,4 @@ Here is a short list of current features:
 Some Upcoming functions to expect soon:
  * More printing stuff, like printing numbers.
  * Basic String Functions
+ * Blind input for passwords and stuff
