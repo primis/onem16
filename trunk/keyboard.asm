@@ -165,14 +165,14 @@ kb_handler:                          ; not a dummy function :3
 ;------------------------------------; Hey! thats the end of the keyboard interrupt! now it may seem like it would take forever to run, but its a lot slower in the BIOS!
 
 ;-----[ get a charecter from input ]--------------;
-getchar:                                          ; Input nothing, Output al = charecter
+getchar:                                          ; Input nothing, Output al = character
    pusha                                          ; Push all our registers
    cld                                            ; Make sure stosb and lodsb increment DI and SI respectivly 
 .check:                                           ; Wait for buffer to have a key
    xor al, al                                     ; Here's a fun trick:
    cmp al, byte [last_key]                        ; We can wait for the buffer to be empty
    je .check                                      ; By checking if the last key is 0
-   mov dl, byte [key_buff]                        ; Retreive the charecter
+   mov dl, byte [key_buff]                        ; Retreive the character
    mov byte [wait_key], dl                        ; We store the char here
    cli                                            ; We have controll over the buffer now, keep it that way!
    xor cx, cx                                     ; We need CX to be empty
@@ -181,6 +181,15 @@ getchar:                                          ; Input nothing, Output al = c
    lea si, [di+1]                                 ; load the address of Data index to source index +1
    rep movsb                                      ; mov a byte from si to di until cx = 0
    dec byte [last_key]                            ; Decrement the number of keys by one
+   mov al, byte [wait_key]                        ; Put our kye here
+   cmp al, 10                                     ; See if its enter
+   jne .print                                     ; If it is, we need a bit more to our output
+   mov bl, al                                     ; Temp spot here
+   mov al, 13                                     ; Carraige return 
+   int 0x10                                       ; Write it
+   mov al, bl                                     ; Put our original charecter back
+.print:                                           ; Printing sub routine, we do it here and not in the interrupt so we can do blind input.
+   int 0x10                                       ; Print dat char
    sti                                            ; Restore interrupts
    popa                                           ; Restore our registers
    mov al, byte [wait_key]                        ; Move the contents of the key buffer to al
