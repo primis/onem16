@@ -32,7 +32,7 @@ scrl_lock db 0                                                       ; Scrol Loc
 kb_handler:                          ; not a dummy function :3
    pusha                             ; Push all registers onto the stack
    in al, 0x60                       ; Read the scancode from the keyboard
-   jmp .specialkey                  ; Check for special keys
+   jmp .specialkey                   ; Check for special keys
    je .done                          ; If any are found, jump to end
 .compare:                            ; Making sure we are using the right key, down, not up.
    cmp al, 0x80                      ; See if the key is being pressed or released
