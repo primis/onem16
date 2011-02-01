@@ -44,15 +44,6 @@ kb_handler:                          ; not a dummy function :3
    mov bx, kbdus                     ; Set up for the xlat
 .convert:                            ; Convert to ascii here
    xlat                              ; Exchange the scancode for its ascii interpretation  
-   mov ah, 0x0E                      ; Using the teletype function in BIOS
-   cmp al, 10                        ; See if its enter
-   jne .print                        ; If it is, we need a bit more to our output
-   mov bl, al                        ; Temp spot here
-   mov al, 13                        ; Carraige return 
-   int 0x10                          ; Write it
-   mov al, bl                        ; Put our original charecter back
-.print:                              ; Printing sub routine
-   int 0x10                          ; Print dat char
    mov bx, key_buff                  ; Move the key buffer to bx
    xor cx, cx                        ; Make it zero!
    mov cl, byte [last_key]           ; Stuff goes here...
@@ -182,6 +173,7 @@ getchar:                                          ; Input nothing, Output al = c
    rep movsb                                      ; mov a byte from si to di until cx = 0
    dec byte [last_key]                            ; Decrement the number of keys by one
    mov al, byte [wait_key]                        ; Put our kye here
+   mov ah, 0x0E                                   ; Using the teletype function in BIOS
    cmp al, 10                                     ; See if its enter
    jne .print                                     ; If it is, we need a bit more to our output
    mov bl, al                                     ; Temp spot here
