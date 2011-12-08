@@ -62,3 +62,4 @@ print_string:                                     ;
 ;-------------------------------------------------;
 
 %INCLUDE "keyboard.asm"
+%INCLUDE "string.asm"
