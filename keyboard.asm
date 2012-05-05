@@ -155,7 +155,7 @@ kb_handler:                          ; not a dummy function :3
     ret                              ; Return to parent function
 ;------------------------------------; Hey! thats the end of the keyboard interrupt! now it may seem like it would take forever to run, but its a lot slower in the BIOS!
 
-;-----[ get a charecter from input ]--------------;
+;-----[ get a character from input ]--------------;
 getchar:                                          ; Input nothing, Output al = character
    pusha                                          ; Push all our registers
    cld                                            ; Make sure stosb and lodsb increment DI and SI respectivly 
@@ -190,8 +190,8 @@ getchar:                                          ; Input nothing, Output al = c
 gets:                                             ; Input SI = String Pointer
    pusha                                          ; Put all registers on stack
    mov di, si                                     ; We're gonna use di
-    .get:                                         ; Get a charecter
-   call getchar                                   ; We're getting one charecter here
+    .get:                                         ; Get a character
+   call getchar                                   ; We're getting one character here
    cmp al, 10                                     ; See if we hit an enter
    je .done                                       ; If we did, finish
    stosb                                          ; Store the byte
