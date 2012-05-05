@@ -40,7 +40,7 @@ start:                           ;
 main:                            ;
    mov si, str_buf               ; Move our source to a buffer (string)
    call gets                     ; Get a string from the keyboard
-   call print_string             ; Print the string
+   call cmd_chk                  ; Call the command execute thingy
    jmp main                      ; loopy loop!
 ;--------------------------------;
 
@@ -63,3 +63,4 @@ print_string:                                     ;
 
 %INCLUDE "keyboard.asm"
 %INCLUDE "string.asm"
+%INCLUDE "commands.asm"
